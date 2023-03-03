@@ -1,144 +1,117 @@
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { object, string, InferType } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField } from "@mui/material";
+import React, { useEffect } from "react";
+import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 
-const inputStyles = {
-  width: "300px",
-  height: "36px",
-  borderRadius: "3px",
-  border: "2px solid #000",
-  outline: "none",
-  padding: "0 10px",
-  fontSize: "16px",
-  marginBottom: "1.6rem",
-};
+// type formType = {
+//   age: string;
+//   name: string;
+// };
 
-const buttonStyles = {
-  width: "300px",
-  height: "36px",
-  borderRadius: "3px",
-  border: "2px solid #000",
-  outline: "none",
-  padding: "0 10px",
-  fontSize: "16px",
-  marginBottom: "1.6rem",
-  cursor: "pointer",
-  backgroundColor: "#043367",
-  color: "#fff",
-};
+const schema = object().shape({
+  age: string().required("Age is required"),
+  email: string().required("Email is required"),
+  name: string().required("Name is required"),
+  password: string().required("Password is required"),
+  confirm_Password: string().required("Confirm Password is required"),
+  // .test("passwords-match", "Passwords must match", function (value) {
+  //   return this.parent.password === value;
+  // }),
+});
 
-export type formType = {
-  name: string;
-  email: string;
-  age: number;
-};
+type formType = InferType<typeof schema>;
 
 const Form = () => {
-  const schema = yup.object().shape({
-    name: yup.string().required("Name is required"),
-    email: yup.string().email().required("Valid email is required"),
-    age: yup.number().required("Age is required"),
-  });
-
   const {
     register,
-    handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     reset,
-    setValue,
-    getValues,
-    control,
+    handleSubmit,
   } = useForm<formType>({
-    mode: "onSubmit",
     resolver: yupResolver(schema),
   });
 
-  const handleOnSubmit = async (data: formType) => {
-    console.log(data);
-    reset();
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful]);
+
+  const onSubmitHandler: SubmitHandler<formType> = (values) => {
+    console.log(values);
   };
+  // console.log(errors);
 
   return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        flexWrap: "wrap",
-        height: "100vh",
-        backgroundColor: "#f2f2f2",
-      }}
-    >
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <div className="name__div">
-          <input
-            type="text"
-            placeholder="Name"
-            {...register("name")}
-            style={inputStyles}
+    <main>
+      <Box
+        sx={{
+          maxWidth: "30rem",
+        }}
+      >
+        <Paper sx={{ p: "4.5rem 2.5rem" }} elevation={3}>
+          <Typography variant="h4" component="h1" sx={{ mb: "2rem" }}>
+            Register
+          </Typography>
+          <Box
+            component="form"
+            noValidate
             autoComplete="off"
-          />
-          <p
-            style={{
-              color: "red",
-            }}
+            onSubmit={handleSubmit(onSubmitHandler)}
           >
-            {errors.name?.message}
-          </p>
-        </div>
-        <div className="email__div">
-          <input
-            type="text"
-            placeholder="Email"
-            {...register("email")}
-            style={inputStyles}
-            autoComplete="off"
-          />
-          <p
-            style={{
-              color: "red",
-            }}
-          >
-            {errors.email?.message}
-          </p>
-        </div>
-        <div className="age__div">
-          <Controller
-            control={control}
-            name="age"
-            render={({ field: { ref, onChange } }) => (
-              <TextField
-                label="Age"
-                variant="outlined"
-                size="small"
-                type="number"
-                ref={ref}
-                // onChange={onChange}
-                sx={{
-                  width: "300px",
-                  height: "36px",
-                  fontSize: "16px",
-                  marginBottom: "1.6rem",
-                }}
-                autoComplete="off"
-              />
-            )}
-          />
-          <p
-            style={{
-              color: "red",
-            }}
-          >
-            {errors.age?.message}
-          </p>
-        </div>
-        <button style={buttonStyles} type="submit">
-          Submit
-        </button>
-      </form>
+            <TextField
+              sx={{ mb: 2 }}
+              label="Name"
+              fullWidth
+              size="small"
+              required
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : ""}
+              {...register("name")}
+            />
+            <TextField
+              sx={{ mb: 2 }}
+              label="Email"
+              fullWidth
+              size="small"
+              required
+              type="email"
+              error={!!errors["email"]}
+              helperText={errors["email"] ? errors["email"].message : ""}
+              {...register("email")}
+            />
+            <TextField
+              sx={{ mb: 2 }}
+              label="Password"
+              fullWidth
+              size="small"
+              required
+              error={!!errors["password"]}
+              helperText={errors["password"] ? errors["password"].message : ""}
+              {...register("password")}
+            />
+            <TextField
+              sx={{ mb: 2 }}
+              label="Confirm Password"
+              fullWidth
+              size="small"
+              required
+              type="text"
+              error={!!errors["confirm_Password"]}
+              helperText={
+                errors["confirm_Password"]
+                  ? errors["confirm_Password"].message
+                  : ""
+              }
+              {...register("confirm_Password")}
+            />
+            <Button variant="contained" fullWidth size="large" type="submit">
+              Register
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
     </main>
   );
 };

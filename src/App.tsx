@@ -1,11 +1,13 @@
 import Form from "Form";
+import RegisterPage from "ZodForm";
 import "./App.css";
 
 function App() {
   return (
-    <div>
+    <>
       <Form />
-    </div>
+      {/* <RegisterPage /> */}
+    </>
   );
 }
 

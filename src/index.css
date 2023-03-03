@@ -16,8 +16,18 @@ body {
   line-height: 1.5;
 }
 
-form {
-  width: 26rem;
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.form {
+  max-width: 40rem;
   border: 2px solid #d5cece;
   border-radius: 5px;
   box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
@@ -27,5 +37,5 @@ form {
   flex-wrap: wrap;
   align-items: center;
   height: 50vh;
-  padding-top: 1.5rem;
+  padding: 0 2rem 0 2rem;
 }
