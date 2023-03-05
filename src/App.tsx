@@ -1,3 +1,4 @@
+import DataGridDemo from "DataGridTable";
 import Form from "Form";
 import RegisterPage from "ZodForm";
 import "./App.css";
@@ -5,7 +6,8 @@ import "./App.css";
 function App() {
   return (
     <>
-      <Form />
+      <DataGridDemo />
+      {/* <Form /> */}
       {/* <RegisterPage /> */}
     </>
   );
