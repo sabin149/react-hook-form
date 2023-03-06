@@ -2,12 +2,15 @@ import {
   AppBar,
   Box,
   Container,
+  createSvgIcon,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import {
   DataGrid,
+  GridCsvGetRowsToExportParams,
+  gridExpandedSortedRowIdsSelector,
   GridSortModel,
   GridToolbar,
   GridToolbarContainer,
@@ -30,6 +33,7 @@ const columns = [
     field: "title",
     headerName: "Title",
     width: 200,
+    height: 100,
   },
   {
     field: "body",
@@ -37,32 +41,6 @@ const columns = [
     flex: 1,
   },
 ];
-
-function CustomToolbar() {
-  return (
-    <GridToolbarContainer>
-      <GridToolbar />
-    </GridToolbarContainer>
-  );
-}
-
-interface ResponseInterface {
-  id: number;
-  userId: number;
-  title: string;
-  body: string;
-}
-
-interface PageStateInterface {
-  isLoading: boolean;
-  data: ResponseInterface[];
-  total: number;
-  page: number;
-  pageSize: number;
-  order: string;
-  sort: string;
-  search: string;
-}
 
 function App() {
   const [pageState, setPageState] = useState<PageStateInterface>({
@@ -76,22 +54,24 @@ function App() {
     search: "",
   });
 
-  console.log({ search: pageState.search });
-
   useEffect(() => {
-    const fetchData = async () => {
-      setPageState((old) => ({ ...old, isLoading: true }));
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?_page=${pageState.page}&q=${pageState.search}&_sort=${pageState.sort}&_order=${pageState.order}&_limit=${pageState.pageSize}`
-      );
-      const json = await response.json();
-      setPageState((old) => ({
-        ...old,
-        isLoading: false,
-        data: json,
-      }));
-    };
-    fetchData();
+    try {
+      const fetchData = async () => {
+        setPageState((old) => ({ ...old, isLoading: true }));
+        const response = await fetch(
+          `https://jsonplaceholder.typicode.com/posts?_page=${pageState.page}&q=${pageState.search}&_sort=${pageState.sort}&_order=${pageState.order}&_limit=${pageState.pageSize}`
+        );
+        const json = await response.json();
+        setPageState((old) => ({
+          ...old,
+          isLoading: false,
+          data: json,
+        }));
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
   }, [
     pageState.page,
     pageState.pageSize,
@@ -194,3 +174,29 @@ function App() {
 }
 
 export default App;
+
+export function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbar />
+    </GridToolbarContainer>
+  );
+}
+
+export interface ResponseInterface {
+  id: number;
+  userId: number;
+  title: string;
+  body: string;
+}
+
+export interface PageStateInterface {
+  isLoading: boolean;
+  data: ResponseInterface[];
+  total: number;
+  page: number;
+  pageSize: number;
+  order: string;
+  sort: string;
+  search: string;
+}
